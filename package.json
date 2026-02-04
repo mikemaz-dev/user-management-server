@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"dev": "ts-node-dev --respawn --transpile-only --exit-child --compiler-options '{\"module\":\"commonjs\"}' -r tsconfig-paths/register src/server.ts",
-		"prisma:generate": "prisma generate",
-		"prisma:migrate": "prisma migrate dev"
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@prisma/client": "6.0.0",
