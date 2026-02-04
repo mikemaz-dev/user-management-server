@@ -1,13 +1,10 @@
 import { UserService } from '@/services/user/user.service'
 import { NextFunction, Request, Response } from 'express'
 import * as jwt from 'jsonwebtoken'
-
 import { Role, User } from '@prisma/client'
 import * as dotenv from 'dotenv'
 
 dotenv.config()
-
-const JWT_SECRET = process.env.JWT_SECRET
 
 declare global {
 	namespace Express {
@@ -29,8 +26,12 @@ export const authenticate = async (
 		return res.status(401).json({ message: 'Unauthorized' })
 	}
 
+	const secret = process.env.JWT_SECRET
+	if (!secret)
+		return res.status(500).json({ message: 'JWT_SECRET not defined' })
+
 	try {
-		const decoded = jwt.verify(token, JWT_SECRET) as any
+		const decoded = jwt.verify(token, secret) as { id: string }
 		const user = await userService.getById(decoded.id)
 		if (!user) {
 			return res.status(401).json({ message: 'User not found' })
