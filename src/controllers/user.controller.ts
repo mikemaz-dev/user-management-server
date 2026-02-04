@@ -73,6 +73,9 @@ router.delete(
 	},
 )
 router.post('/last-seen', authenticate, async (req, res) => {
+	if (!req.user?.id) {
+		return res.status(401).json({ error: 'Unauthorized' })
+	}
 	await userService.updateLastSeen(req.user.id)
 	res.json({ message: 'ok' })
 })

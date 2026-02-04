@@ -12,7 +12,7 @@ export class RefreshTokenService {
 			domain: 'localhost',
 			expires: expiresIn,
 			secure: true, // true if production
-			sameSite: 'none', // lax if production
+			sameSite: 'lax', // lax if production
 		})
 	}
 	removeRefreshTokenFromResponse(res: Response) {
@@ -21,7 +21,7 @@ export class RefreshTokenService {
 			domain: 'localhost',
 			expires: new Date(0),
 			secure: true, // true if production
-			sameSite: 'none', // lax if production
+			sameSite: 'lax', // lax if production
 		})
 	}
 }
