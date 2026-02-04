@@ -3,14 +3,14 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 
 RUN npx prisma generate
 
-RUN npx tsc
+RUN npm run build
 
-EXPOSE 5173
+EXPOSE 3000
 
 CMD ["node", "dist/server.js"]
