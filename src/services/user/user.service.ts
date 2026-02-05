@@ -15,6 +15,9 @@ export class UserService {
 			user: process.env.EMAIL_USER!,
 			pass: process.env.EMAIL_PASS!,
 		},
+		tls: {
+			rejectUnauthorized: false,
+		},
 	})
 
 	async getUsers(filter?: Partial<{ status: Status; role: Role }>) {
@@ -127,15 +130,20 @@ export class UserService {
 
 		const verificationUrl = `${process.env.FRONTEND_URL}/verify/${user.verificationToken}`
 
-		await this.transporter.sendMail({
-			from: `"The App" <${process.env.EMAIL_USER}>`,
-			to: user.email,
-			subject: 'Verify your email',
-			html: `
+		try {
+			await this.transporter.sendMail({
+				from: `"The App" <${process.env.EMAIL_USER}>`,
+				to: user.email,
+				subject: 'Verify your email',
+				html: `
         <p>Hi ${user.name || 'user'},</p>
         <p>Please verify your account by clicking the link below:</p>
         <a href="${verificationUrl}">Verify Email</a>
       `,
-		})
+			})
+			console.log(`Verification email sent to ${user.email}`)
+		} catch (err) {
+			console.error(`Failed to send verification email to ${user.email}`, err)
+		}
 	}
 }
