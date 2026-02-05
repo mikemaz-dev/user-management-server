@@ -12,11 +12,8 @@ export class UserService {
 		port: 587,
 		secure: false,
 		auth: {
-			user: process.env.EMAIL_USER!,
-			pass: process.env.EMAIL_PASS!,
-		},
-		tls: {
-			rejectUnauthorized: false,
+			user: process.env.EMAIL_USER,
+			pass: process.env.EMAIL_PASS,
 		},
 	})
 
@@ -66,7 +63,9 @@ export class UserService {
 			},
 		})
 
-		await this.sendVerificationEmail(user)
+		this.sendVerificationEmail(user).catch(err => {
+			console.error('Failed to send verification email:', err)
+		})
 
 		return user
 	}
