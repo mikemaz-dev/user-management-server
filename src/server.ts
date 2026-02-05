@@ -25,17 +25,18 @@ async function main() {
 	)
 
 	app.options(
-		'*',
+		'/api/*',
 		cors({
 			origin: 'https://user-management-client-sage.vercel.app',
 			credentials: true,
 		}),
 	)
-	;(app.use('/api', authRouter),
+		app.use('/api', authRouter),
 		app.use('/api/users', userRouter),
-		app.all(/^.*$/, (req: Request, res: Response) => {
-			res.status(404).json({ error: `Route ${req.originalUrl} not found` })
-		}))
+		
+		app.use((req: Request, res: Response) => {
+    res.status(404).json({ error: `Route ${req.originalUrl} not found` })
+  })
 
 	const PORT = process.env.PORT || 4200
 	app.listen(PORT, () => {
