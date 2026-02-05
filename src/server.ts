@@ -17,25 +17,19 @@ async function main() {
 	app.use(cookieParser())
 
 	app.use(
+		'/api',
 		cors({
 			origin: 'https://user-management-client-sage.vercel.app',
 			credentials: true,
 			exposedHeaders: 'set-cookie',
 		}),
 	)
+	
+	app.use('/api', authRouter),
+	app.use('/api/users', userRouter),
 
-	app.options(
-		'/api/*',
-		cors({
-			origin: 'https://user-management-client-sage.vercel.app',
-			credentials: true,
-		}),
-	)
-		app.use('/api', authRouter),
-		app.use('/api/users', userRouter),
-		
-		app.use((req: Request, res: Response) => {
-    res.status(404).json({ error: `Route ${req.originalUrl} not found` })
+	app.use((req: Request, res: Response) => {
+  res.status(404).json({ error: `Route ${req.originalUrl} not found` })
   })
 
 	const PORT = process.env.PORT || 4200
