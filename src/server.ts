@@ -18,7 +18,7 @@ async function main() {
 
 	app.use(
 		cors({
-			origin: 'https://user-management-murex-iota.vercel.app/',
+			origin: 'https://user-management-client-sage.vercel.app/',
 			credentials: true,
 			exposedHeaders: 'set-cookie',
 		}),
