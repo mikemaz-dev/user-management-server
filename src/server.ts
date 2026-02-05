@@ -22,6 +22,8 @@ async function main() {
 			origin: 'https://user-management-client-sage.vercel.app',
 			credentials: true,
 			exposedHeaders: 'set-cookie',
+			methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+   		allowedHeaders: ['Content-Type', 'Authorization'],
 		}),
 	)
 	
