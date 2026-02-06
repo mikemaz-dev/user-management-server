@@ -12,7 +12,10 @@ const refreshTokenService = new RefreshTokenService()
 router.post(
 	'/auth/login',
 	body('email').isEmail(),
-	body('password').isLength({ min: 6 }),
+	body('password')
+		.isString()
+		.notEmpty()
+		.withMessage('Password must not be empty'),
 	async (req: Request, res: Response) => {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
@@ -28,16 +31,25 @@ router.post(
 
 router.post(
 	'/auth/register',
-	body('email').isEmail(),
-	body('password').isLength({ min: 6 }),
+	body('email').isEmail().withMessage('Invalid email'),
+
+	body('password')
+		.isString()
+		.notEmpty()
+		.withMessage('Password must not be empty'),
+
 	async (req: Request, res: Response) => {
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() })
+			return res.status(400).json({
+				message: 'Validation error',
+				errors: errors.array(),
+			})
 		}
 
 		const dto: AuthDto = req.body
 		const { refreshToken, ...response } = await authService.register(dto)
+
 		refreshTokenService.addRefreshTokenToResponse(res, refreshToken)
 		res.status(200).json(response)
 	},
