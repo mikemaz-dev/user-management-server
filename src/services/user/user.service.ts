@@ -2,20 +2,11 @@ import { AuthDto } from '@/dto/auth.dto'
 import { PrismaClient, Role, Status, User } from '@prisma/client'
 import { hash } from 'argon2'
 import { v4 as uuidv4 } from 'uuid'
-import nodemailer from 'nodemailer'
+import { EmailService } from '../email/email.service'
 
 export class UserService {
 	private prisma = new PrismaClient()
-
-	private transporter = nodemailer.createTransport({
-		host: 'smtp-relay.brevo.com',
-		port: 465,
-		secure: true,
-		auth: {
-			user: process.env.EMAIL_USER,
-			pass: process.env.EMAIL_PASS,
-		},
-	})
+	private emailService = new EmailService()
 
 	async getUsers(filter?: Partial<{ status: Status; role: Role }>) {
 		return this.prisma.user.findMany({
@@ -63,9 +54,14 @@ export class UserService {
 			},
 		})
 
-		this.sendVerificationEmail(user).catch(err => {
-			console.error('Failed to send verification email:', err)
-		})
+		try {
+			await this.emailService.sendVerificationEmail(
+				user.email,
+				verificationToken,
+			)
+		} catch (e) {
+			console.error('EMAIL_SEND_FAILED', e)
+		}
 
 		return user
 	}
@@ -122,27 +118,5 @@ export class UserService {
 			where: { id: userId },
 			data: { lastSeen: new Date() },
 		})
-	}
-
-	private async sendVerificationEmail(user: User) {
-		if (!user.verificationToken) return
-
-		const verificationUrl = `${process.env.FRONTEND_URL}/verify/${user.verificationToken}`
-
-		try {
-			await this.transporter.sendMail({
-				from: `"The App" <${process.env.EMAIL_USER}>`,
-				to: user.email,
-				subject: 'Verify your email',
-				html: `
-        <p>Hi ${user.name || 'user'},</p>
-        <p>Please verify your account by clicking the link below:</p>
-        <a href="${verificationUrl}">Verify Email</a>
-      `,
-			})
-			console.log(`Verification email sent to ${user.email}`)
-		} catch (err) {
-			console.error(`Failed to send verification email to ${user.email}`, err)
-		}
 	}
 }
