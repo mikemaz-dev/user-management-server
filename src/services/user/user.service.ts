@@ -95,22 +95,14 @@ export class UserService {
 		})
 	}
 
-	async verifyUser(token: string) {
-		const user = await this.prisma.user.findUnique({
-			where: { verificationToken: token },
-		})
-
-		if (!user) return null
-
-		await this.prisma.user.update({
-			where: { id: user.id },
+	async verifyUser(userId: string) {
+		return this.prisma.user.update({
+			where: { id: userId },
 			data: {
 				status: 'ACTIVE',
-				verificationToken: null,
+				verifiedAt: new Date(),
 			},
 		})
-
-		return user
 	}
 
 	async updateLastSeen(userId: string) {

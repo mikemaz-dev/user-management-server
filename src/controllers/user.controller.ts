@@ -20,9 +20,9 @@ router.post('/register', async (req, res) => {
 	}
 })
 
-router.get('/verify/:token', async (req, res) => {
-	const { token } = req.params
-	const user = await userService.verifyUser(token)
+router.get('/verify/:id/verify', async (req, res) => {
+	const { id } = req.params
+	const user = await userService.verifyUser(id)
 	if (!user) return res.status(400).json({ message: 'Invalid token' })
 	res.json({ message: 'Email verified successfully', status: user.status })
 })
