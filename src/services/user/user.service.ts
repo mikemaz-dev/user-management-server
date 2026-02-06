@@ -100,7 +100,6 @@ export class UserService {
 			where: { id: userId },
 			data: {
 				status: 'ACTIVE',
-				verifiedAt: new Date(),
 			},
 		})
 	}
