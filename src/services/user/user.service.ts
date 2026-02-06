@@ -54,15 +54,6 @@ export class UserService {
 			},
 		})
 
-		try {
-			await this.emailService.sendVerificationEmail(
-				user.email,
-				verificationToken,
-			)
-		} catch (e) {
-			console.error('EMAIL_SEND_FAILED', e)
-		}
-
 		return user
 	}
 
