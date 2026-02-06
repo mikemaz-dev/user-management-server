@@ -26,6 +26,13 @@ async function main() {
    		allowedHeaders: ['Content-Type', 'Authorization'],
 		}),
 	)
+
+	app.options('*', cors({
+		origin: 'https://user-management-client-sage.vercel.app',
+		credentials: true,
+		methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+		allowedHeaders: 'Content-Type, Authorization',
+	}))
 	
 	app.use('/api', authRouter),
 	app.use('/api/users', userRouter),
